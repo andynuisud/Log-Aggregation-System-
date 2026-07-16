@@ -1,0 +1,29 @@
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - app_data:/app/backend/data
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - app
+
+  kafka:
+    image: redpandadata/redpanda:latest
+    ports:
+      - "9092:9092"
+    command:
+      - redpanda
+      - start
+      - --smp=1
+      - --memory=256M
+      - --kafka-addr=0.0.0.0:9092
+      - --advertise-kafka-addr=kafka:9092
+
+volumes:
+  app_data:
